@@ -5,6 +5,7 @@ const logout = auth0Logout
 const products = [{ name: 'sape' }, { name: 'xd' }]
 </script>
 <template>
+  <NuxtLink to="/callback"> a callback </NuxtLink>
   <div>
     <button @click="login">Log IN</button>
     <pre>{{ user }}</pre>

@@ -1,5 +1,23 @@
 export const useAuth0Cookie = () => useCookie('auth0_token')
 
+export const getToken = async (codeAuth0: string) => {
+  const config = useRuntimeConfig()
+  const response = await $fetch(`https://${config.AUTH0_DOMAIN}/oauth/token`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: {
+      client_id: config.AUTH0_CLIENT_ID,
+      client_secret: config.AUTH0_CLIENT_SECRET,
+      code: codeAuth0,
+      grant_type: 'authorization_code',
+      redirect_uri: config.AUTH0_CALLBACK_URL,
+    },
+  })
+    .then((res) => res)
+    .catch((err) => console.log(err))
+  return response
+}
+
 export const auth0Fetch = (url: string, fetchOptions: any = {}) => {
   const config = useRuntimeConfig()
   return $fetch(url, {
@@ -14,6 +32,7 @@ export const auth0Fetch = (url: string, fetchOptions: any = {}) => {
 
 export const useAuth0User = async () => {
   const cookie = useAuth0Cookie()
+  // const token = useState('auth0_token')
   const user = useState('auth0_user')
   if (cookie.value && !user.value) {
     user.value = await auth0Fetch('/userinfo')
